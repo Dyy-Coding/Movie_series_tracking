@@ -13,25 +13,4 @@ use App\Http\Controllers\web\Authentication\AuthWebController;
 |
 */
 
-// 🟢 Public Authentication Routes
-Route::middleware('guest')->group(function () {
-    Route::get('/login', [AuthWebController::class, 'showLoginForm'])->name('login');
-    Route::post('/login', [AuthWebController::class, 'login']);
 
-    Route::get('/register', [AuthWebController::class, 'showRegisterForm'])->name('register');
-    Route::post('/register', [AuthWebController::class, 'register']);
-});
-
-// 🔒 Protected Routes (requires user to be logged in)
-Route::middleware('auth')->group(function () {
-    Route::get('/dashboard', function () {
-        return view('dashboard'); // Replace with controller if needed
-    })->name('dashboard');
-
-    Route::post('/logout', [AuthWebController::class, 'logout'])->name('logout');
-});
-
-// 🌐 Home Route (optional)
-Route::get('/', function () {
-    return redirect()->route('login');
-});
