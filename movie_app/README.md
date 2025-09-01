@@ -25,7 +25,7 @@ A modern, user-friendly movie browsing and profile management app built with Flu
 ## 📸 Screenshots
 | Edit Profile | Settings | Profile |
 |--------------|----------|----------|
-| ![Login](assets/screenshots/login.png) | ![Movies](assets/screenshots/movies.png) | ![Profile](assets/screenshots/profile.png) |
+| ![Login](assets/images/login.png) | ![Movies](assets/images/movies.png) | ![Profile](assets/images/profile.png) |
 
 *Note*: Replace placeholder images with actual screenshots of your app.
 

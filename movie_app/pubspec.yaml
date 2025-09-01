@@ -64,7 +64,6 @@ flutter:
     - assets/logo/
     - assets/animations/
     - assets/images/
-    - assets/screenshots
   #------[FONTS]------
   fonts:
     - family: "Nunito"
