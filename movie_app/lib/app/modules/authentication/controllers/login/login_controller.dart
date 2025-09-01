@@ -3,27 +3,28 @@ import 'package:flutter/material.dart';
 import 'package:get/get.dart';
 import 'package:http/http.dart' as http;
 import 'package:movie_app/app/data/api/auth.dart';
-import 'package:movie_app/app/modules/home/screens/home_screen.dart';
+import 'package:movie_app/app/modules/movies/screens/movie_screen.dart';
 
 class LoginController extends GetxController {
-  // Observables
+  /// Observables
   var isLoading = false.obs;
   var token = ''.obs;
+  var isPasswordHidden = true.obs;
 
-  // Text controllers for input fields
+  /// Text controllers
   final emailController = TextEditingController();
   final passwordController = TextEditingController();
 
-  // API Base URL
+  /// API Base URL
   final String baseUrl = Api.baseUrl;
 
-  // Login method
   Future<void> login() async {
     final email = emailController.text.trim();
     final password = passwordController.text.trim();
 
+    // Input validation
     if (email.isEmpty || password.isEmpty) {
-      Get.snackbar('Error', 'Email and password cannot be empty');
+      _showError("Email and password cannot be empty");
       return;
     }
 
@@ -31,31 +32,119 @@ class LoginController extends GetxController {
 
     try {
       final url = Uri.parse('$baseUrl/login');
-
       final response = await http.post(
         url,
-        headers: {'Content-Type': 'application/json'},
-        body: jsonEncode({'email': email, 'password': password}),
+        headers: {
+          'Content-Type': 'application/json',
+          // Add any custom headers here if needed
+        },
+        body: jsonEncode({
+          'email': email,
+          'password': password,
+        }),
       );
 
+      // Decode response
       final responseData = jsonDecode(response.body);
 
-      if (response.statusCode == 200 && responseData['success'] == true) {
-        token.value = responseData['data']['access_token'];
-        Get.snackbar('Success', responseData['message']);
-        // Navigate to next screen if needed
-        Get.to(() => HomeScreen()); // Replace with your home screen widget
+      // Check response status
+      if (response.statusCode == 200) {
+        if (responseData['success'] == true && responseData['data'] != null) {
+          final accessToken = responseData['data']['access_token'];
+
+          if (accessToken != null && accessToken is String) {
+            token.value = accessToken;
+            _showSuccess(responseData['message'] ?? "Login successful");
+            _navigateToHome();
+          } else {
+            _showError("Invalid token received from server.");
+          }
+        } else {
+          _showError(responseData['message'] ?? "Login failed.");
+        }
       } else {
-        Get.snackbar('Error', responseData['message'] ?? 'Login failed');
+        _showError("Login failed: ${responseData['message'] ?? 'Unexpected error'}");
       }
     } catch (e) {
-      Get.snackbar('Error', e.toString());
+      _showError("Something went wrong: ${e.toString()}");
     } finally {
       isLoading.value = false;
     }
   }
 
-  // Dispose text controllers
+
+  /// Navigate to Reset Password screen
+  void goToResetPassword() {
+    Get.toNamed("/reset_password"); // Make sure this route exists
+  }
+
+  /// -------------------------
+  /// TOGGLE PASSWORD VISIBILITY
+  /// -------------------------
+  void togglePasswordVisibility() {
+    isPasswordHidden.value = !isPasswordHidden.value;
+  }
+
+  /// -------------------------
+  /// NAVIGATION
+  /// -------------------------
+  void goToRegister() {
+    Get.toNamed("/register"); // Adjust route if needed
+  }
+
+  void _navigateToHome() {
+    Get.offAll(() => MovieScreen());
+  }
+
+  /// -------------------------
+  /// SOCIAL LOGIN (Mock)
+  /// -------------------------
+  Future<void> signInWithFacebook() async {
+    await _mockSocialLogin("Facebook");
+  }
+
+  Future<void> signInWithGoogle() async {
+    await _mockSocialLogin("Google");
+  }
+
+  Future<void> signInWithTikTok() async {
+    await _mockSocialLogin("TikTok");
+  }
+
+  Future<void> _mockSocialLogin(String provider) async {
+    try {
+      isLoading.value = true;
+      await Future.delayed(const Duration(seconds: 2)); // simulate API call
+      token.value = "${provider.toLowerCase()}_mock_token";
+      _showSuccess("Signed in successfully with $provider");
+      _navigateToHome();
+    } catch (e) {
+      _showError("$provider login failed: $e");
+    } finally {
+      isLoading.value = false;
+    }
+  }
+
+  /// -------------------------
+  /// FEEDBACK HELPERS
+  /// -------------------------
+  void _showSuccess(String message) {
+    Get.snackbar("Success", message,
+        backgroundColor: Colors.green.shade600,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM);
+  }
+
+  void _showError(String message) {
+    Get.snackbar("Error", message,
+        backgroundColor: Colors.red.shade600,
+        colorText: Colors.white,
+        snackPosition: SnackPosition.BOTTOM);
+  }
+
+  /// -------------------------
+  /// CLEANUP
+  /// -------------------------
   @override
   void onClose() {
     emailController.dispose();

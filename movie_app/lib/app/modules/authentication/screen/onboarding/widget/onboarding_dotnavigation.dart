@@ -12,7 +12,7 @@ class OnBoardingDotNavigation extends StatelessWidget {
     final controller = OnBoardingController.instance;
 
     return Positioned(
-      bottom: UDevicesHelper.getBottomNavigationBarHeight() * 4,
+      bottom: UDevicesHelper.getBottomNavigationBarHeight() * 2,
       left: 0,
       right: 0,
       child: Center(

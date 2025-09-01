@@ -1,10 +1,15 @@
 import 'package:flutter/material.dart';
-import 'package:iconsax/iconsax.dart';
+import 'package:get/get.dart';
 import 'package:movie_app/app/common/style/padding.dart';
+import 'package:movie_app/app/modules/authentication/controllers/login/login_controller.dart';
+import 'package:movie_app/app/modules/authentication/screen/login/widget/email_field.dart';
+import 'package:movie_app/app/modules/authentication/screen/login/widget/footer_login.dart';
+import 'package:movie_app/app/modules/authentication/screen/login/widget/login_animation.dart';
+import 'package:movie_app/app/modules/authentication/screen/login/widget/login_button.dart';
+import 'package:movie_app/app/modules/authentication/screen/login/widget/password_field.dart';
+import 'package:movie_app/app/utils/constants/images.dart';
 import 'package:movie_app/app/utils/constants/sizes.dart';
 import 'package:movie_app/app/utils/constants/texts..dart';
-import 'package:movie_app/app/modules/authentication/controllers/login/login_controller.dart';
-import 'package:get/get.dart';
 
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
@@ -18,11 +23,12 @@ class LoginScreen extends StatelessWidget {
         child: SingleChildScrollView(
           padding: UPadding.screenPadding,
           child: Column(
-            crossAxisAlignment: CrossAxisAlignment.start,
+            crossAxisAlignment: CrossAxisAlignment.center,
             children: [
-              ///-----[Header]------
+              loginAnimation(animation: Uimages.loginAnimation),
+              /// Header
               Column(
-                crossAxisAlignment: CrossAxisAlignment.start,
+                crossAxisAlignment: CrossAxisAlignment.center,
                 children: [
                   Text(
                     UTexts.loginTitle,
@@ -35,76 +41,23 @@ class LoginScreen extends StatelessWidget {
                   ),
                 ],
               ),
-
               SizedBox(height: USizes.spaceLarge),
 
-              ///-----[Form]------
-              TextFormField(
-                controller: loginController.emailController,
-                keyboardType: TextInputType.emailAddress,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Iconsax.direct_right),
-                  hintText: 'Email',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(USizes.radiusSmall),
-                  ),
-                ),
-              ),
-
+              /// Form fields
+              const EmailField(),
               SizedBox(height: USizes.spaceExtra),
+              const PasswordField(),
+              SizedBox(height: USizes.spaceLarge),
 
-              TextFormField(
-                controller: loginController.passwordController,
-                obscureText: true,
-                decoration: InputDecoration(
-                  prefixIcon: Icon(Iconsax.directbox_receive),
-                  hintText: 'Password',
-                  border: OutlineInputBorder(
-                    borderRadius: BorderRadius.circular(USizes.radiusMedium),
-                  ),
-                ),
-              ),
+              /// Login button
+              LoginButton(loginController: loginController),
+              SizedBox(height: USizes.spaceLarge),
+
+              /// Footer
+              FooterLogin(loginController: loginController),
 
               SizedBox(height: USizes.spaceLarge),
 
-              ///-----[Login Button]------
-              Obx(() {
-                return loginController.isLoading.value
-                    ? Center(child: CircularProgressIndicator())
-                    : SizedBox(
-                        width: double.infinity,
-                        child: ElevatedButton(
-                          onPressed: () {
-                            loginController.login();
-                          },
-                          child: Text(
-                            'Login',
-                            style: TextStyle(fontSize: 16),
-                          ),
-                        ),
-                      );
-              }),
-
-              SizedBox(height: USizes.spaceMedium),
-
-              ///-----[Footer Links]------
-              Row(
-                mainAxisAlignment: MainAxisAlignment.spaceBetween,
-                children: [
-                  TextButton(
-                    onPressed: () {
-                      // Navigate to Forgot Password
-                    },
-                    child: Text('Forgot Password?'),
-                  ),
-                  TextButton(
-                    onPressed: () {
-                      // Navigate to Sign Up screen
-                    },
-                    child: Text('Sign Up'),
-                  ),
-                ],
-              ),
             ],
           ),
         ),
@@ -112,3 +65,7 @@ class LoginScreen extends StatelessWidget {
     );
   }
 }
+
+
+
+

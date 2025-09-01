@@ -13,9 +13,16 @@ dependencies:
 
   # Page Indicator
   smooth_page_indicator: ^1.2.0+3
+  
+  #share preference
+  shared_preferences: ^2.0.15
 
   # Iconsax Package
   iconsax: ^0.0.8
+
+  # Image Picker 
+  image_picker: ^1.1.0  # <- Add the latest version here
+
 
   # Lottie Animation
   lottie: ^3.1.0
@@ -25,6 +32,12 @@ dependencies:
 
   # HTTP requests
   http: ^1.1.0    
+
+  # For caching network images
+  cached_network_image: ^3.3.1
+  
+  # For advanced routing and navigation
+  go_router: ^14.0.0
 
 
 
@@ -50,6 +63,8 @@ flutter:
   assets:
     - assets/logo/
     - assets/animations/
+    - assets/images/
+    - assets/screenshots
   #------[FONTS]------
   fonts:
     - family: "Nunito"

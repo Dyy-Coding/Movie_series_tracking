@@ -6,7 +6,7 @@ class UColors {
   static const Color scaffoldBackground = Color(0xFF000000); // Dark theme base
   static const Color appBarBackground = Color(0xFF1E88E5);   // Main app bar color
   static const Color cardBackground = Color(0xFF212121);     // Movie/series card background
-  static const Color sectionBackground = Color(0xFFF5F5F5); // Light sections or panels
+  static const Color sectionBackground = Color(0xFFF5F5F5);  // Light sections or panels
 
   // ---------------- Text Colors ----------------
   static const Color textPrimary = Color(0xFFFFFFFF);   // Main text (white for dark bg)
@@ -19,10 +19,19 @@ class UColors {
 
   // ---------------- Borders & Dividers ----------------
   static const Color borderColor = Color(0xFF212121);  // Card & container borders
-  static const Color dividerColor = Colors.black54;    // Divider lines
+  static const Color dividerColor = Colors.black54;     // Divider lines
 
   // ---------------- Special Accents ----------------
   static const Color ratingStar = Color(0xFFFFD700);   // Gold for ratings
   static const Color progressTrack = Color(0xFF6AB7FF); // Tracking progress bar
   static const Color favoriteIcon = Color(0xFFE53935);  // Red for likes/favorites
+ 
+  // ---------------- Button Colors ----------------
+  static const Color buttonStart = Color(0xFF6A0DAD); // Purple
+  static const Color buttonEnd = Color(0xFFFF4E50);   // Pink-red gradient
+
+  
+  // ---------------- Accents ----------------
+  static const Color cameraIcon = Color(0xFFFFC300); // Yellow camera icon
+  static const Color shadow = Colors.black45;        // Subtle shadows
 }
