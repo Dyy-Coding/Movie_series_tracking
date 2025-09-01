@@ -10,6 +10,7 @@ A modern, user-friendly movie browsing and profile management app built with Flu
 - [Features](#features)
 - [Screenshots](#screenshots)
 - [Installation](#installation)
+- [Usage](#usage)
 - [Project Structure](#project-structure)
 - [Contact](#contact)
 
