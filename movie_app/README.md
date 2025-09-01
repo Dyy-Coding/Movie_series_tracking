@@ -64,12 +64,13 @@ Follow these steps to set up the Movie App locally.
 ## 🚀 Usage
 1. **Launch the App**: Run `flutter run` to start the app on an emulator or device.
 2. **Onboarding**: Complete the onboarding flow to access the main features.
-3. **Edit Profile**:
+3. **Register or Login App**:
    - Navigate to the login or register screen (`/login`) / (`/register`).
    - Update name, email, password, and profile image.
-4. **Settings**:
+4. **Going to movies page**:
    - Go to the movies screen (`/movies`).
 5. **Explore Movies**: (TBD: Add movie browsing instructions once implemented.)
+6. **Navigation to other screen by bottom nav bar**: (Switch screen which screen that you want.)
 
 ## 📁 Project Structure
 
