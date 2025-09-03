@@ -1,55 +1,60 @@
-import 'dart:convert';
-import 'package:http/http.dart' as http;
-import 'package:movie_app/app/data/api/auth.dart';
+import 'package:firebase_auth/firebase_auth.dart';
+import 'package:cloud_firestore/cloud_firestore.dart';
 
-class AuthService {
-  final String baseUrl = Api.baseUrl;
+class Auth {
+  final FirebaseAuth _firebaseAuth = FirebaseAuth.instance;
+  final FirebaseFirestore _firestore = FirebaseFirestore.instance;
+  
 
-  Future<Map<String, dynamic>> registerUser({
+  // Get current logged-in user
+  User? get currentUser => _firebaseAuth.currentUser;
+
+  // Listen to auth state changes
+  Stream<User?> get authStateChanges => _firebaseAuth.authStateChanges();
+
+  // Sign in with email & password
+  Future<UserCredential> loginWithEmailAndPassword({
+    required String email,
+    required String password,
+  }) async {
+    return await _firebaseAuth.signInWithEmailAndPassword(
+      email: email,
+      password: password,
+    );
+  }
+
+  // Register new user (Firebase Auth + Firestore)
+  Future<UserCredential> registerWithEmailAndPassword({
     required String name,
     required String email,
     required String password,
-    required String passwordConfirmation,
-    String? image,
+    required String passwordConfirm,
   }) async {
-    final url = Uri.parse('$baseUrl/register');
+    if (password != passwordConfirm) {
+      throw Exception("Passwords do not match");
+    }
 
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'name': name,
-        'email': email,
-        'password': password,
-        'password_confirmation': passwordConfirmation,
-        'image': image,
-      }),
+    // Create user with email & password
+    final userCredential = await _firebaseAuth.createUserWithEmailAndPassword(
+      email: email,
+      password: password,
     );
 
-    return {
-      'statusCode': response.statusCode,
-      'body': jsonDecode(response.body),
-    };
+    // Update display name in Firebase Auth
+    await userCredential.user?.updateDisplayName(name);
+
+    // Save extra user info in Firestore
+    await _firestore.collection('users').doc(userCredential.user?.uid).set({
+      'name': name,
+      'email': email,
+      'createdAt': DateTime.now(),
+    });
+
+    return userCredential;
   }
 
-  Future<Map<String, dynamic>> loginUser({
-    required String email,
-    required String password,
-  }) async {
-    final url = Uri.parse('$baseUrl/login');
-
-    final response = await http.post(
-      url,
-      headers: {'Content-Type': 'application/json'},
-      body: jsonEncode({
-        'email': email,
-        'password': password,
-      }),
-    );
-
-    return {
-      'statusCode': response.statusCode,
-      'body': jsonDecode(response.body),
-    };
+  // Sign out
+  Future<void> signOut() async {
+    await _firebaseAuth.signOut();
   }
 }

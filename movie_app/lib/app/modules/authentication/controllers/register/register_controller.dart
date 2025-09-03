@@ -5,10 +5,13 @@ import 'package:movie_app/app/modules/movies/screens/movie_screen.dart';
 import 'package:movie_app/app/services/authentication/api_service.dart';
 
 class RegisterController extends GetxController {
-  final AuthService _authService = AuthService();
+  final Auth _authService = Auth();
 
+  // -------------------------
+  // Reactive variables
+  // -------------------------
   var isLoading = false.obs;
-  var token = ''.obs;
+  var token = ''.obs; // Firebase ID token or mock token
   var isPasswordHidden = true.obs;
 
   final nameController = TextEditingController();
@@ -16,17 +19,23 @@ class RegisterController extends GetxController {
   final passwordController = TextEditingController();
   final confirmPasswordController = TextEditingController();
 
-  /// Toggle password visibility
+  // -------------------------
+  // Toggle password visibility
+  // -------------------------
   void togglePasswordVisibility() {
     isPasswordHidden.value = !isPasswordHidden.value;
   }
 
-  /// Navigate to Login screen
+  // -------------------------
+  // Navigate to Login screen
+  // -------------------------
   void goToLogin() {
     Get.to(() => LoginScreen());
   }
 
-  /// Register with API using AuthService
+  // -------------------------
+  // REGISTER WITH EMAIL & PASSWORD
+  // -------------------------
   Future<void> register() async {
     final name = nameController.text.trim();
     final email = emailController.text.trim();
@@ -34,73 +43,90 @@ class RegisterController extends GetxController {
     final passwordConfirm = confirmPasswordController.text.trim();
 
     if (name.isEmpty || email.isEmpty || password.isEmpty || passwordConfirm.isEmpty) {
-      Get.snackbar('Error', 'All fields are required');
+      _showError('All fields are required');
       return;
     }
 
     if (password != passwordConfirm) {
-      Get.snackbar('Error', 'Passwords do not match');
+      _showError('Passwords do not match');
       return;
     }
 
     isLoading.value = true;
 
     try {
-      final result = await _authService.registerUser(
+      final userCredential = await _authService.registerWithEmailAndPassword(
         name: name,
         email: email,
         password: password,
-        passwordConfirmation: passwordConfirm,
+        passwordConfirm: passwordConfirm,
       );
 
-      final statusCode = result['statusCode'];
-      final responseData = result['body'];
+      // Get Firebase ID token
+      final idToken = await userCredential.user?.getIdToken();
+      token.value = idToken ?? '';
 
-      if (statusCode == 200 && responseData['success'] == true) {
-        final accessToken = responseData['data']['access_token'];
-        token.value = accessToken;
-
-        Get.snackbar('Success', responseData['message'] ?? 'Registered successfully');
-        Get.offAll(() => MovieScreen());
-      } else {
-        Get.snackbar('Error', responseData['message'] ?? 'Registration failed');
-      }
+      _showSuccess('Registered successfully');
+      Get.offAll(() => MovieScreen());
     } catch (e) {
-      Get.snackbar('Error', 'Something went wrong: $e');
+      _showError('Registration failed: $e');
     } finally {
       isLoading.value = false;
     }
   }
 
-  /// -------------------------
-  /// Mock Social Logins
-  /// -------------------------
-  Future<void> signInWithFacebook() async {
-    await _mockSocialLogin('Facebook', 'facebook_mock_token');
-  }
+  // -------------------------
+  // SOCIAL LOGIN (Mock)
+  // -------------------------
+  Future<void> signInWithFacebook() async =>
+      _mockSocialLogin('Facebook', 'facebook_mock_token');
 
-  Future<void> signInWithGoogle() async {
-    await _mockSocialLogin('Google', 'google_mock_token');
-  }
+  Future<void> signInWithGoogle() async =>
+      _mockSocialLogin('Google', 'google_mock_token');
 
-  Future<void> signInWithTikTok() async {
-    await _mockSocialLogin('TikTok', 'tiktok_mock_token');
-  }
+  Future<void> signInWithTikTok() async =>
+      _mockSocialLogin('TikTok', 'tiktok_mock_token');
 
   Future<void> _mockSocialLogin(String platform, String mockToken) async {
     try {
       isLoading.value = true;
       await Future.delayed(const Duration(seconds: 2));
       token.value = mockToken;
-      Get.snackbar("$platform Login", "Signed in successfully with $platform");
+      _showSuccess("Signed in successfully with $platform");
       Get.offAll(() => MovieScreen());
     } catch (e) {
-      Get.snackbar("Error", "$platform login failed: $e");
+      _showError("$platform login failed: $e");
     } finally {
       isLoading.value = false;
     }
   }
 
+  // -------------------------
+  // FEEDBACK HELPERS
+  // -------------------------
+  void _showSuccess(String message) {
+    Get.snackbar(
+      "Success",
+      message,
+      backgroundColor: Colors.green.shade600,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+
+  void _showError(String message) {
+    Get.snackbar(
+      "Error",
+      message,
+      backgroundColor: Colors.red.shade600,
+      colorText: Colors.white,
+      snackPosition: SnackPosition.BOTTOM,
+    );
+  }
+
+  // -------------------------
+  // CLEANUP
+  // -------------------------
   @override
   void onClose() {
     nameController.dispose();

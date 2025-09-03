@@ -14,6 +14,7 @@ import 'package:movie_app/app/utils/constants/texts..dart';
 class LoginScreen extends StatelessWidget {
   const LoginScreen({super.key});
 
+
   @override
   Widget build(BuildContext context) {
     final loginController = Get.put(LoginController());

@@ -3,6 +3,7 @@ import 'package:get/get.dart';
 import 'package:movie_app/app/data/datasources/movies_data.dart';
 import 'package:movie_app/app/data/models/movie.dart';
 import 'package:movie_app/app/data/models/user_profile.dart';
+import 'package:movie_app/app/services/authentication/api_service.dart';
 
 class ProfileController extends GetxController {
   // Text controller for search field
@@ -17,18 +18,22 @@ class ProfileController extends GetxController {
   // All series from data source
   final List<MovieItem> allSeries = seriesList;
 
+  final Auth auth = Auth();
+
   var user = UserProfile(
     name: "Chandy Neat",
     username: "@chandy",
-    avatar: "https://i.pinimg.com/736x/66/c7/a0/66c7a02621df47e1c51ccae8f2d0bf01.jpg",
+    avatar:
+        "https://i.pinimg.com/736x/66/c7/a0/66c7a02621df47e1c51ccae8f2d0bf01.jpg",
   ).obs;
 
   void logout() {
-  // Clear user session or authentication tokens
-  // Example: await storage.erase();
+    // Clear user session or authentication tokens
+    // Example: await storage.erase();
 
-  // Navigate to login and remove all previous routes
-  Get.offAllNamed("/login");
+    // Navigate to login and remove all previous routes
+    auth.signOut();
+    Get.offAllNamed("/login");
   }
 
   void editProfile() {
@@ -36,11 +41,9 @@ class ProfileController extends GetxController {
     Get.toNamed("/edit_profile");
   }
 
-
   void openSettings() {
     // TODO: navigate to settings
     Get.toNamed("/setting");
-
   }
 
   @override
